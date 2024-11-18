@@ -44,7 +44,13 @@ def knn_impute_by_item(matrix, valid_data, k):
     # TODO:                                                             #
     # Implement the function as described in the docstring.             #
     #####################################################################
-    acc = None
+    nbrs = KNNImputer(n_neighbors=k)
+    mat_transposed = nbrs.fit_transform(matrix.T) # transpose for question similarity
+    mat = mat_transposed.T #transpose back to original format
+
+    acc = sparse_matrix_evaluate(valid_data, mat)
+    print("Validation Accuracy: {}".format(acc))
+    return acc
     #####################################################################
     #                       END OF YOUR CODE                            #
     #####################################################################
@@ -67,7 +73,44 @@ def main():
     # the best performance and report the test accuracy with the        #
     # chosen k*.                                                        #
     #####################################################################
-    pass
+    k = [1, 6, 11, 16, 21, 26]
+
+    # user based KNN
+    user_accuracies = []
+    print("User-based collaborative filtering:")
+    for i in k:
+        acc = knn_impute_by_user(sparse_matrix, val_data, i)
+        user_accuracies.append((i, acc))
+    # select the best k for user-based filtering
+    best_k_user, best_acc_user = max(user_accuracies, key=lambda x: x[1])
+    print(f"Best k (user-based): {best_k_user} with Validation Accuracy: {best_acc_user}")
+    # evaluate the test set using best k
+    test_acc_user = knn_impute_by_user(sparse_matrix, test_data, best_k_user)
+    print(f"Test Accuracy (user-based, k={best_k_user}): {test_acc_user}")
+
+    # item based KNN
+    item_accuracies = []
+    print("\nItem-based collaborative filtering: ")
+    for i in k:
+        acc = knn_impute_by_item(sparse_matrix, val_data, i)
+        item_accuracies.append((i, acc))
+    # select best k for item based filtering
+    best_k_item, best_acc_item = max(item_accuracies, key=lambda x: x[1])
+    print(f"Best k (item-based): {best_k_item} with Validation Accuracy: {best_acc_item}")
+
+    # evaluate on test set using best k
+    test_acc_item = knn_impute_by_item(sparse_matrix, test_data, best_k_item)
+    print(f"Test Accuracy (item-based, k={best_k_item}): {test_acc_item}")
+
+    # comparison of user based vs item based performance
+    print("\nComparison:")
+    print(f"User-based: Best k={best_k_user}, Test Accuracy={test_acc_user}")
+    print(f"Item-based: Best k={best_k_item}, Test Accuracy={test_acc_item}")
+    if test_acc_user > test_acc_item:
+        print("User-based collaborative filtering performs better.")
+    else:
+        print("Item-based collaborative filtering performs better.")
+
     #####################################################################
     #                       END OF YOUR CODE                            #
     #####################################################################
