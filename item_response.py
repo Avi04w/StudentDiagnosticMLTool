@@ -32,7 +32,7 @@ def neg_log_likelihood(data, theta, beta):
         q = data["question_id"][i]
         c = data["is_correct"][i]
         diff = theta[u] - beta[q]
-        log_lklihood += (c * diff + (np.log(1 + np.exp(diff))))
+        log_lklihood += (c * diff - (np.log(1 + np.exp(diff))))
     #####################################################################
     #                       END OF YOUR CODE                            #
     #####################################################################
@@ -90,8 +90,6 @@ def irt(data, val_data, lr, iterations):
     # TODO: Initialize theta and beta.
     num_users = max(data["user_id"]) + 1
     num_questions = max(data["question_id"]) + 1
-    # theta = np.random.normal(0, 1, num_users)
-    # beta = np.random.normal(0, 1, num_questions)
     theta = np.zeros(num_users)
     beta = np.zeros(num_questions)
 
@@ -100,12 +98,6 @@ def irt(data, val_data, lr, iterations):
     val_log_lld = []
 
     for i in range(iterations):
-
-        # Training Negative Log Likelihood
-        if i == 70:
-            neg_lld = neg_log_likelihood(data, theta=theta, beta=beta)
-
-
         neg_lld = neg_log_likelihood(data, theta=theta, beta=beta)
         train_log_lld.append(neg_lld)
 
@@ -181,8 +173,8 @@ def main():
     # TODO:                                                             #
     # Implement part (d)                                                #
     #####################################################################
-    j1, j2, j3 = 1, 13, 23
-
+    j1, j2, j3 = 2, 60, 150
+    
     print(f"Question {j1} Difficulty: {beta[j1 - 1]:.4f}")
     print(f"Question {j2} Difficulty: {beta[j2 - 1]:.4f}")
     print(f"Question {j3} Difficulty: {beta[j3 - 1]:.4f}")
@@ -191,7 +183,7 @@ def main():
     prob_j2 = sigmoid(theta - beta[j2])
     prob_j3 = sigmoid(theta - beta[j3])
 
-    # Sort theta for smooth plotting
+    # Sort theta for creating graphs
     sorted_indices = np.argsort(theta)
     sorted_theta = theta[sorted_indices]
     prob_j1 = prob_j1[sorted_indices]
