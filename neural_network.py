@@ -106,6 +106,7 @@ def train(model, lr, lamb, train_data, zero_train_data, valid_data, num_epoch):
     num_student = train_data.shape[0]
 
     valid_accs = []
+    train_losses = []
 
     for epoch in range(0, num_epoch):
         train_loss = 0.0
@@ -132,12 +133,13 @@ def train(model, lr, lamb, train_data, zero_train_data, valid_data, num_epoch):
 
         valid_acc = evaluate(model, zero_train_data, valid_data)
         valid_accs.append(valid_acc)
+        train_losses.append(train_loss)
         print(
             "Epoch: {} \tTraining Cost: {:.6f}\t " "Valid Acc: {}".format(
                 epoch, train_loss, valid_acc
             )
         )
-    return valid_accs
+    return train_losses, valid_accs
     #####################################################################
     #                       END OF YOUR CODE                            #
     #####################################################################
@@ -207,7 +209,7 @@ def main():
     num_epoch = 10
     lamb = 0
 
-    # valid_accs = train(model, lr, lamb, train_matrix, zero_train_matrix, valid_data, num_epoch)
+    # train_losses, valid_accs = train(model, lr, lamb, train_matrix, zero_train_matrix, valid_data, num_epoch)
     # epochs = list(range(1, num_epoch + 1))
 
     # plt.figure(figsize=(8, 5))
@@ -215,6 +217,15 @@ def main():
     # plt.title('Validation Accuracy Over Epochs')
     # plt.xlabel('Epoch')
     # plt.ylabel('Validation Accuracy')
+    # plt.grid(True)
+    # plt.legend()
+    # plt.show()
+
+    # plt.figure(figsize=(8, 5))
+    # plt.plot(epochs, train_losses, marker='o', linestyle='-', label='Train Losses')
+    # plt.title('Training Loss Over Epochs')
+    # plt.xlabel('Epoch')
+    # plt.ylabel('Training Accuracy')
     # plt.grid(True)
     # plt.legend()
     # plt.show()
