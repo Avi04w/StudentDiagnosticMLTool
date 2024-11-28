@@ -28,10 +28,10 @@ def neg_log_likelihood(data, theta, beta):
     # Implement the function as described in the docstring.             #
     #####################################################################
     log_lklihood = 0.0
-    for i, u in enumerate(data["user_id"]):
-        q = data["question_id"][i]
-        c = data["is_correct"][i]
-        diff = theta[u] - beta[q]
+    for index, i in enumerate(data["user_id"]):
+        j = data["question_id"][index]
+        c = data["is_correct"][index]
+        diff = theta[i] - beta[j]
         log_lklihood += (c * diff - (np.log(1 + np.exp(diff))))
     #####################################################################
     #                       END OF YOUR CODE                            #
@@ -60,14 +60,14 @@ def update_theta_beta(data, lr, theta, beta):
     # TODO:                                                             #
     # Implement the function as described in the docstring.             #
     #####################################################################
-    for i, u in enumerate(data["user_id"]):
-        q = data["question_id"][i]
-        c = data["is_correct"][i]
+    for index, i in enumerate(data["user_id"]):
+        j = data["question_id"][index]
+        c = data["is_correct"][index]
         
-        p = sigmoid(theta[u] - beta[q])
+        p = sigmoid(theta[i] - beta[j])
 
-        theta[u] += (c - p) * lr
-        beta[q] += (p - c) * lr
+        theta[i] += (c - p) * lr
+        beta[j] += (p - c) * lr
     #####################################################################
     #                       END OF YOUR CODE                            #
     #####################################################################
