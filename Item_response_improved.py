@@ -22,7 +22,11 @@ def load_question_meta(root_dir="./data"):
         reader = csv.reader(csv_file)
         for row in reader:
             try:
-                data[int(row[0])] = eval(row[1])
+                subjects = eval(row[1])
+                for s in subjects:
+                    if s == 0:
+                        subjects.remove(s)
+                data[int(row[0])] = subjects
             except NameError:
                 # Pass first row.
                 pass
