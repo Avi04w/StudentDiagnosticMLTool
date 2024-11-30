@@ -26,7 +26,7 @@ def knn_impute_by_user(matrix, valid_data, k):
     # We use NaN-Euclidean distance measure.
     mat = nbrs.fit_transform(matrix)
     acc = sparse_matrix_evaluate(valid_data, mat)
-    print("Validation Accuracy: {}".format(acc))
+    
     return acc
 
 
@@ -49,8 +49,7 @@ def knn_impute_by_item(matrix, valid_data, k):
     mat = mat_transposed.T #transpose back to original format
 
     acc = sparse_matrix_evaluate(valid_data, mat)
-    print("Validation Accuracy: {}".format(acc))
-    return acc
+
     #####################################################################
     #                       END OF YOUR CODE                            #
     #####################################################################
@@ -80,10 +79,20 @@ def main():
     print("User-based collaborative filtering:")
     for i in k:
         acc = knn_impute_by_user(sparse_matrix, val_data, i)
-        user_accuracies.append((i, acc))
+        user_accuracies.append(acc)
+    plt.plot(k, user_accuracies)
+    plt.xlabel("k-value")
+    plt.ylabel("Validation Accuracy")
+    plt.title("User-based collaborative filtering")
+    plt.savefig("user-based_knn")
+    plt.show()
+
+    for i in range(len(k)):
+        print(f"Impute By User: k-value: {k[i]}, Validation Accuracy: {user_accuracies[i]}")
+
     # select the best k for user-based filtering
-    best_k_user, best_acc_user = max(user_accuracies, key=lambda x: x[1])
-    print(f"Best k (user-based): {best_k_user} with Validation Accuracy: {best_acc_user}")
+    best_k_index = np.argmax(user_accuracies)
+    best_k_user = k[best_k_index]
     # evaluate the test set using best k
     test_acc_user = knn_impute_by_user(sparse_matrix, test_data, best_k_user)
     print(f"Test Accuracy (user-based, k={best_k_user}): {test_acc_user}")
@@ -93,11 +102,20 @@ def main():
     print("\nItem-based collaborative filtering: ")
     for i in k:
         acc = knn_impute_by_item(sparse_matrix, val_data, i)
-        item_accuracies.append((i, acc))
-    # select best k for item based filtering
-    best_k_item, best_acc_item = max(item_accuracies, key=lambda x: x[1])
-    print(f"Best k (item-based): {best_k_item} with Validation Accuracy: {best_acc_item}")
+        item_accuracies.append(acc)
+    plt.plot(k, item_accuracies)
+    plt.xlabel("k-value")
+    plt.ylabel("Validation Accuracy")
+    plt.title("Item-based collaborative filtering")
+    plt.savefig("item-based_knn")
+    plt.show()
 
+    for i in range(len(k)):
+        print(f"Impute By Item: k-value: {k[i]}, Validation Accuracy: {item_accuracies[i]}")
+    
+    # select best k for item based filtering
+    best_k_item_index = np.argmax(item_accuracies)
+    best_k_item = k[best_k_item_index]
     # evaluate on test set using best k
     test_acc_item = knn_impute_by_item(sparse_matrix, test_data, best_k_item)
     print(f"Test Accuracy (item-based, k={best_k_item}): {test_acc_item}")
