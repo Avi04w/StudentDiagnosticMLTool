@@ -139,7 +139,7 @@ def update_theta_beta(data, lr, theta, beta, beta_subject, question_meta):
     return theta, beta, beta_subject
 
 
-def irt(data, val_data, lr, iterations, question_meta, num_subjects):
+def irt_modified(data, val_data, lr, iterations, question_meta, num_subjects):
     """Train IRT model.
 
     You may optionally replace the function arguments to receive a matrix.
@@ -231,17 +231,19 @@ def main():
     #             best_acc = val_acc
     #             best_hyper = [iteration, lr]
     # print("Best hyperparameters: ", best_hyper)
-    # Best hyperparameters:  [100, 0.05]
+    # Best hyperparameters: [100, 0.05]
 
+    # Ideal Hyperparameters
     learning_rate = 0.05
     num_iterations = 100
-    theta, beta, beta_subject, val_acc_lst, train_log_lld, val_log_lld = irt(train_data, val_data, learning_rate, num_iterations, question_meta, num_subjects)
+    theta, beta, beta_subject, val_acc_lst, train_log_lld, val_log_lld = irt_modified(train_data, val_data, learning_rate, num_iterations, question_meta, num_subjects)
     
+    # Print Final Results
     print(f"Final Validation Accuracy: {val_acc_lst[-1]:.4f}")
-
     test_acc = evaluate(test_data, theta, beta, beta_subject, question_meta)
     print(f"Final Test Accuracy: {test_acc:.4f}")
 
+    # Plot the Training and Validation NLL
     import matplotlib.pyplot as plt
     plt.plot(range(1, len(train_log_lld) + 1), train_log_lld, label="Training NLL")
     plt.plot(range(1, len(val_log_lld) + 1), val_log_lld, label="Validation NLL")
@@ -252,9 +254,8 @@ def main():
     plt.show()
     
     #####################################################################
-
+    # Create ICC plots for questions 2, 60, and 150
     j1, j2, j3 = 2, 60, 150
-    
     print(f"Question {j1} Difficulty: {beta[j1 - 1]:.4f}")
     print(f"Question {j2} Difficulty: {beta[j2 - 1]:.4f}")
     print(f"Question {j3} Difficulty: {beta[j3 - 1]:.4f}")
